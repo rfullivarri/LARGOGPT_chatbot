@@ -28,9 +28,9 @@ def search():
     df = pd.read_csv('CMQ_prompts_embeddings.csv')
     df['embedding_prompts'] = df['embedding_prompts'].apply(eval).apply(np.array)
     df["similarities"] = df['embedding_prompts'].apply(lambda x: cosine_similarity(x, search_term_vector))
-    sorted_by_similarity = df.sort_values("similarities", ascending=False).head(3)
+    sorted_by_similarity = df.sort_values("similarities", ascending=False).head(1)
 
-    results = sorted_by_similarity['text'].values.tolist()
+    results = sorted_by_similarity[['outputs_tags','tags','values']].values.tolist()
 
     # Render the search results template, passing in the search query and results
     return render_template('search_results.html', query=query, results=results)
