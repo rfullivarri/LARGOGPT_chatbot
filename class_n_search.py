@@ -1,6 +1,7 @@
 import sys
 print(sys.version)
 
+import random
 import pandas as pd
 import numpy as np
 
@@ -56,18 +57,27 @@ for product in product_list:
     [atributo1.append(p) for p in product.attributes.keys() if p != 'estado']   
 atributo1 = set(atributo1) 
 
+calibres= []
+for product in product_list:  
+    #print(product.attributes['calibre'])
+    calibres.append(product.attributes['calibre'])   
+calibres = list(set(calibres) )
+
+
+
 reglas1= ['las','los','de la','del','la','el']
 # pregunta1= ['Cual es', 'Sabes', 'Pasame', 'Necesito']
 # pregunta2= ['Cuáles son', 'Sabes', 'Pasame', 'Necesito']
 pregunta1= ['Cual es']
 pregunta2= ['Cuáles son']
 
-largogpt1= pd.DataFrame(columns=["", "", "", ""])
-largogpt1.columns = ["prompts","outputs_tags","tags","values"]
+largogpt1= pd.DataFrame(columns=["", "", "", "", "", ""])
+largogpt1.columns = ["prompts","outputs_tags","tags","values","tags2","values2"]
 
 
 
 for product in product_list:
+    random_index = random.randrange(len(calibres))    
     for p1 in product.attributes:
         if p1 not in atributo1:
             continue
@@ -133,6 +143,18 @@ for product in product_list:
                                           'tags': p2,
                                           'values': product.attributes[str(p2)]}
                             largogpt1 = largogpt1.append(add_row, ignore_index=True)
+
+                            #SEARCH MARCA CALIBRE 
+                            if p1 != 'calibre':
+                                add_row1 = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {product.attributes[str(p2)]} {calibres[random_index]}?", 
+                                              'outputs_tags': p1,
+                                              'tags': p2,
+                                              'values': product.attributes[str(p2)],
+                                              'tags2': 'calibre',
+                                              'values2':calibres[random_index]
+                                              }
+                                largogpt1 = largogpt1.append(add_row1, ignore_index=True)
+                            
                 else:
                     if p2 == 'codigo':
                         for preg in pregunta1:    
@@ -155,8 +177,8 @@ for product in product_list:
 #print(largogpt1)
 largogpt1 = largogpt1.drop_duplicates()
 largogpt1 = largogpt1.iloc[1:].sample(frac=1).reset_index(drop=True)
-filename = ("PROMPTS_N_COMPLETATIONS_PRODUCT.csv")
-largogpt1.to_csv(f"ChatBot_OpenAi/prompts/{filename}", sep=",")
+filename = ("PROMPTS_N_COMPLETATIONS_PRODUCT2.csv")
+largogpt1.to_csv(f"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_chatbot/prompts/{filename}", sep=",")
 
 
 

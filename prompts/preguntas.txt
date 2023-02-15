@@ -1,0 +1,52 @@
+Generales:
+    buscando codigos:
+        ¿Cuáles son los códigos de la marca "aa"?   #respuesta= los codigos
+        ¿Cuáles son los códigos del estilo "bb"?    #respuesta= los codigos
+        ¿Cuáles son los códigos del calibre "11"?   #respuesta= los codigos
+        ¿Cuáles son los códigos del negocio "cc"?   #respuesta= los codigos
+    buscando marcas:    
+        ¿Cuáles son las marcas con estilo "bb"?  #respuesta= las marcas
+        ¿Cuáles son las marcas de negocio?  #respuesta= las marcas
+        ¿Cuáles son las marcas con calibre "11"?    #respuesta= las marcas
+    buscando estilos:
+        ¿Cuáles son los estilos de la marca "aa"?  #respuesta= los estilos
+        ¿Cuáles son los estilos del negocio?  #respuesta= los estilos
+        ¿Cuáles son los estilos con calibre "11"?    #respuesta= los estilos
+    buscando calibres:
+        ¿Cuáles son los calibres de la marca "aa"?  #respuesta= los calibres
+        ¿Cuáles son los calibres del negocio "cc"?  #respuesta= los calibres
+        ¿Cuáles son los calibres con estilo "11"?    #respuesta= los calibres
+    buscando stock:
+        ¿Cuáles son las marcas con stock?   #respuesta= las marcas
+        ¿Cuáles el stock de la marca?   #respuesta= stock total x marcas
+        ¿Cuáles son los calibres con stock? #respuesta= los calibre
+        ¿Cuáles el stock del calibre?   #respuesta= stock total x calibres 
+        ¿Cuáles son los estilos con stock?  #respuesta= los estilos
+        ¿Cuáles el stock del estilo?    #respuesta= sotck total x estilos
+        ¿Cuáles son los negocios con stock? #respuesta= los negocios
+        ¿Cuáles el stock del negocio?   #respuesta= sotck total x negocios
+
+Unica respuesta:
+    buscando marca:
+        ¿Cuál es la marca del codigo?   #respuesta= 1 marca    
+    buscando estilo:
+        ¿Cuál es el estilo del codigo?    #respuesta= 1 estilo
+    buscando negocio:
+        ¿Cuál es el negocio del codigo?   #respuesta= 1 negocio
+    buscando calibre:
+        ¿Cuál es el calibre del codigo?  #respuesta= 1 calibre
+    buscando stock:
+        ¿Cuál es el stock del codigo?  #respuesta= 1 stock
+    buscando todos los atributos de un producto:
+        ¿que producto es el codigo?  #respuesta= negocio/marca/estilo/calibre/stock
+
+Preguntas Marca + calibre
+    Cual es el stock de marca calibre?
+    Cual es el codigo de marca calibre?
+    Cual es el negocio de marca calibre?
+
+
+
+
+
+

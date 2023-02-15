@@ -30,8 +30,14 @@ def search():
     df["similarities"] = df['embedding_prompts'].apply(lambda x: cosine_similarity(x, search_term_vector))
     sorted_by_similarity = df.sort_values("similarities", ascending=False).head(1)
 
-    results = sorted_by_similarity[['outputs_tags','tags','values']].values.tolist()
-    #results = sorted_by_similarity['outputs_tags'].values.tolist()
+    
+    results =[{'outputs_tags': sorted_by_similarity['outputs_tags'].values.tolist(),
+                 'tags':sorted_by_similarity['tags'].values.tolist(),
+                 'values':sorted_by_similarity[''].values.tolist()}]
+    if 'values2' in sorted_by_similarity:
+      results.append({'tags2': sorted_by_similarity['tags2'].values.tolist(),
+                      'values2': sorted_by_similarity['values2'].values.tolist()})
+    
 
     # Render the search results template, passing in the search query and results
     return render_template('search_results.html', query=query, results=results)
