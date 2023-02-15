@@ -31,6 +31,7 @@ def search():
     sorted_by_similarity = df.sort_values("similarities", ascending=False).head(1)
 
     results = sorted_by_similarity[['outputs_tags','tags','values']].values.tolist()
+    #results = sorted_by_similarity['outputs_tags'].values.tolist()
 
     # Render the search results template, passing in the search query and results
     return render_template('search_results.html', query=query, results=results)
