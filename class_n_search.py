@@ -1,11 +1,11 @@
 import sys
 print(sys.version)
-
+import app
 import random
 import pandas as pd
 import numpy as np
 
-df= pd.read_excel(r"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGO-GPT/Maestro de producto.xlsx",sheet_name="BD")
+df= pd.read_excel(r"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_chatbot/Maestro de producto.xlsx",sheet_name="BD")
 #df= df.head(20)
 #print(df)
 
@@ -49,136 +49,134 @@ product_list = Products.Products_DB()
 
 
 
+# #ARMADO DE PROMPT PARA AI
+# atributo1= []
+# for product in product_list:  
+#     [atributo1.append(p) for p in product.attributes.keys() if p != 'estado']   
+# atributo1 = set(atributo1) 
 
-
-#ARMADO DE PROMPT PARA AI
-atributo1= []
-for product in product_list:  
-    [atributo1.append(p) for p in product.attributes.keys() if p != 'estado']   
-atributo1 = set(atributo1) 
-
-calibres= []
-for product in product_list:  
-    #print(product.attributes['calibre'])
-    calibres.append(product.attributes['calibre'])   
-calibres = list(set(calibres) )
-
-
-
-reglas1= ['las','los','de la','del','la','el']
-# pregunta1= ['Cual es', 'Sabes', 'Pasame', 'Necesito']
-# pregunta2= ['Cuáles son', 'Sabes', 'Pasame', 'Necesito']
-pregunta1= ['Cual es']
-pregunta2= ['Cuáles son']
-
-largogpt1= pd.DataFrame(columns=["", "", "", "", "", ""])
-largogpt1.columns = ["prompts","outputs_tags","tags","values","tags2","values2"]
+# calibres= []
+# for product in product_list:  
+#     #print(product.attributes['calibre'])
+#     calibres.append(product.attributes['calibre'])   
+# calibres = list(set(calibres) )
 
 
 
-for product in product_list:
-    random_index = random.randrange(len(calibres))    
-    for p1 in product.attributes:
-        if p1 not in atributo1:
-            continue
-        else: 
-            for p2 in product.attributes:
-                input = [{'tag':str(p2) , 'value': str(product.attributes[str(p2)])}]
-                Busqueda_productos = Products.search_product_info(input, Product)
-                product_info = Products.get_product_output(Busqueda_productos)
-                result = 0
-                if len(Busqueda_productos) > 1:
-                    result = [info[str(p1)] for info in product_info]
-                else:
-                    result = {info[str(p1)] for info in product_info}
-                if p2 not in atributo1:
-                    continue
-                elif (p1 == p2) or (p2== 'stock') :
-                    pass
-                elif p1 == 'marca' or p1 == 'negocio':
-                    if p1 == 'marca':
-                        if p2 == 'codigo':
-                            for preg in pregunta1:
-                                #prompt =f"prompt: ¿{preg} {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###" 
-                                #promptsncompletatios.append(str(prompt))
-                                add_row = {'prompts': f"¿{preg} {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
-                                              'outputs_tags': p1,
-                                              'tags': p2,
-                                              'values': product.attributes[str(p2)]}
-                                largogpt1 = largogpt1.append(add_row, ignore_index=True)       
-                        else:
-                            for preg in pregunta2:    
-                                 #prompt =f"prompt: ¿{preg} {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###" 
-                                 #promptsncompletatios.append(str(prompt))
-                                add_row = {'prompts': f"¿{preg} {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
-                                              'outputs_tags': p1,
-                                              'tags': p2,
-                                              'values': product.attributes[str(p2)]}
-                                largogpt1 = largogpt1.append(add_row, ignore_index=True)
-                    else:
-                       if p2 == 'marca':
-                            for preg in pregunta1:
-                                 #prompt =f"prompt: ¿{preg} {reglas1[5]} {p1} {reglas1[2]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###"        
-                                 #promptsncompletatios.append(str(prompt))
-                                add_row = {'prompts': f"¿{preg} {reglas1[5]} {p1} {reglas1[2]} {p2} {product.attributes[str(p2)]}?", 
-                                              'outputs_tags': p1,
-                                              'tags': p2,
-                                              'values': product.attributes[str(p2)]}
-                                largogpt1 = largogpt1.append(add_row, ignore_index=True)
-                       else:   
-                            for preg in pregunta2:    
-                                 #prompt =f"prompt: ¿{preg} {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###" 
-                                 #promptsncompletatios.append(str(prompt))
-                                add_row = {'prompts': f"¿{preg} {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
-                                              'outputs_tags': p1,
-                                              'tags': p2,
-                                              'values': product.attributes[str(p2)]}
-                                largogpt1 = largogpt1.append(add_row, ignore_index=True)
-                elif p2 == 'marca':
-                        for preg in pregunta2:    
-                             #prompt =f"prompt: ¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###"
-                             #promptsncompletatios.append(str(prompt))
-                            add_row = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]}?", 
-                                          'outputs_tags': p1,
-                                          'tags': p2,
-                                          'values': product.attributes[str(p2)]}
-                            largogpt1 = largogpt1.append(add_row, ignore_index=True)
+# reglas1= ['las','los','de la','del','la','el']
+# # pregunta1= ['Cual es', 'Sabes', 'Pasame', 'Necesito']
+# # pregunta2= ['Cuáles son', 'Sabes', 'Pasame', 'Necesito']
+# pregunta1= ['Cual es']
+# pregunta2= ['Cuáles son']
 
-                            #SEARCH MARCA CALIBRE 
-                            if p1 != 'calibre':
-                                add_row1 = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {product.attributes[str(p2)]} {calibres[random_index]}?", 
-                                              'outputs_tags': p1,
-                                              'tags': p2,
-                                              'values': product.attributes[str(p2)],
-                                              'tags2': 'calibre',
-                                              'values2':calibres[random_index]
-                                              }
-                                largogpt1 = largogpt1.append(add_row1, ignore_index=True)
+# largogpt1= pd.DataFrame(columns=["", "", "", "", "", ""])
+# largogpt1.columns = ["prompts","outputs_tags","tags","values","tags2","values2"]
+
+
+
+# for product in product_list:
+#     random_index = random.randrange(len(calibres))    
+#     for p1 in product.attributes:
+#         if p1 not in atributo1:
+#             continue
+#         else: 
+#             for p2 in product.attributes:
+#                 input = [{'tag':str(p2) , 'value': str(product.attributes[str(p2)])}]
+#                 Busqueda_productos = Products.search_product_info(input, Product)
+#                 product_info = Products.get_product_output(Busqueda_productos)
+#                 result = 0
+#                 if len(Busqueda_productos) > 1:
+#                     result = [info[str(p1)] for info in product_info]
+#                 else:
+#                     result = {info[str(p1)] for info in product_info}
+#                 if p2 not in atributo1:
+#                     continue
+#                 elif (p1 == p2) or (p2== 'stock') :
+#                     pass
+#                 elif p1 == 'marca' or p1 == 'negocio':
+#                     if p1 == 'marca':
+#                         if p2 == 'codigo':
+#                             for preg in pregunta1:
+#                                 #prompt =f"prompt: ¿{preg} {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###" 
+#                                 #promptsncompletatios.append(str(prompt))
+#                                 add_row = {'prompts': f"¿{preg} {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
+#                                               'outputs_tags': p1,
+#                                               'tags': p2,
+#                                               'values': product.attributes[str(p2)]}
+#                                 largogpt1 = largogpt1.append(add_row, ignore_index=True)       
+#                         else:
+#                             for preg in pregunta2:    
+#                                  #prompt =f"prompt: ¿{preg} {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###" 
+#                                  #promptsncompletatios.append(str(prompt))
+#                                 add_row = {'prompts': f"¿{preg} {reglas1[0]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
+#                                               'outputs_tags': p1,
+#                                               'tags': p2,
+#                                               'values': product.attributes[str(p2)]}
+#                                 largogpt1 = largogpt1.append(add_row, ignore_index=True)
+#                     else:
+#                        if p2 == 'marca':
+#                             for preg in pregunta1:
+#                                  #prompt =f"prompt: ¿{preg} {reglas1[5]} {p1} {reglas1[2]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###"        
+#                                  #promptsncompletatios.append(str(prompt))
+#                                 add_row = {'prompts': f"¿{preg} {reglas1[5]} {p1} {reglas1[2]} {p2} {product.attributes[str(p2)]}?", 
+#                                               'outputs_tags': p1,
+#                                               'tags': p2,
+#                                               'values': product.attributes[str(p2)]}
+#                                 largogpt1 = largogpt1.append(add_row, ignore_index=True)
+#                        else:   
+#                             for preg in pregunta2:    
+#                                  #prompt =f"prompt: ¿{preg} {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###" 
+#                                  #promptsncompletatios.append(str(prompt))
+#                                 add_row = {'prompts': f"¿{preg} {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
+#                                               'outputs_tags': p1,
+#                                               'tags': p2,
+#                                               'values': product.attributes[str(p2)]}
+#                                 largogpt1 = largogpt1.append(add_row, ignore_index=True)
+#                 elif p2 == 'marca':
+#                         for preg in pregunta2:    
+#                              #prompt =f"prompt: ¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###"
+#                              #promptsncompletatios.append(str(prompt))
+#                             add_row = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {p2} {product.attributes[str(p2)]}?", 
+#                                           'outputs_tags': p1,
+#                                           'tags': p2,
+#                                           'values': product.attributes[str(p2)]}
+#                             largogpt1 = largogpt1.append(add_row, ignore_index=True)
+
+#                             #SEARCH MARCA CALIBRE 
+#                             if p1 != 'calibre':
+#                                 add_row1 = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[2]} {product.attributes[str(p2)]} {calibres[random_index]}?", 
+#                                               'outputs_tags': p1,
+#                                               'tags': p2,
+#                                               'values': product.attributes[str(p2)],
+#                                               'tags2': 'calibre',
+#                                               'values2':calibres[random_index]
+#                                               }
+#                                 largogpt1 = largogpt1.append(add_row1, ignore_index=True)
                             
-                else:
-                    if p2 == 'codigo':
-                        for preg in pregunta1:    
-                             #prompt =f"prompt: ¿{preg}  {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###"
-                             #promptsncompletatios.append(str(prompt))
-                            add_row = {'prompts': f"¿{preg}  {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
-                                          'outputs_tags': p1,
-                                          'tags': p2,
-                                          'values': product.attributes[str(p2)]}
-                            largogpt1 = largogpt1.append(add_row, ignore_index=True)
-                    else:   
-                             #prompt =f"prompt: ¿{preg}  {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###"
-                             #promptsncompletatios.append(str(prompt))
-                            add_row = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
-                                          'outputs_tags': p1,
-                                          'tags': p2,
-                                          'values': product.attributes[str(p2)]}
-                            largogpt1 = largogpt1.append(add_row, ignore_index=True)
+#                 else:
+#                     if p2 == 'codigo':
+#                         for preg in pregunta1:    
+#                              #prompt =f"prompt: ¿{preg}  {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[4]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]} es: {result} ###"
+#                              #promptsncompletatios.append(str(prompt))
+#                             add_row = {'prompts': f"¿{preg}  {reglas1[5]} {p1} {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
+#                                           'outputs_tags': p1,
+#                                           'tags': p2,
+#                                           'values': product.attributes[str(p2)]}
+#                             largogpt1 = largogpt1.append(add_row, ignore_index=True)
+#                     else:   
+#                              #prompt =f"prompt: ¿{preg}  {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}? ###, completion: {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]} son: {set(result)} ###"
+#                              #promptsncompletatios.append(str(prompt))
+#                             add_row = {'prompts': f"¿{preg}  {reglas1[1]} {p1}s {reglas1[3]} {p2} {product.attributes[str(p2)]}?", 
+#                                           'outputs_tags': p1,
+#                                           'tags': p2,
+#                                           'values': product.attributes[str(p2)]}
+#                             largogpt1 = largogpt1.append(add_row, ignore_index=True)
 
-#print(largogpt1)
-largogpt1 = largogpt1.drop_duplicates()
-largogpt1 = largogpt1.iloc[1:].sample(frac=1).reset_index(drop=True)
-filename = ("PROMPTS_N_COMPLETATIONS_PRODUCT2.csv")
-largogpt1.to_csv(f"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_chatbot/prompts/{filename}", sep=",")
+# #print(largogpt1)
+# largogpt1 = largogpt1.drop_duplicates()
+# largogpt1 = largogpt1.iloc[1:].sample(frac=1).reset_index(drop=True)
+# filename = ("PROMPTS_N_COMPLETATIONS_PRODUCT2.csv")
+# largogpt1.to_csv(f"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_chatbot/prompts/{filename}", sep=",")
 
 
 
@@ -192,22 +190,29 @@ largogpt1.to_csv(f"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_c
 
 
 #BUSCADOR A PARTI DE: promptsncompletatios INPUTS/OUTPUTS
-# inputs = [{'tag': 'marca', 'value': 'pepsi'}, {'tag': 'calibre', 'value': '500 cc pet'}] 
-# #inputs = [{'tag': 'codigo', 'value': 26}]
-# output_tag = 'stock'
-
-# Busqueda_productos = Products.search_product_info(inputs, Product)
-
-# if Busqueda_productos:
-#     if len(Busqueda_productos) > 1:
-#         print(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}":')
-#         product_info = Products.get_product_output(Busqueda_productos)
-#         for info in product_info:
-#             print(f"- Codigo: {info['codigo']}, Marca: {info['marca']}, Calibre: {info['calibre']}, Stock: {info['stock']}")
-#     else:
-#         product_info = Products.get_product_output(Busqueda_productos)
-#         print(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
-# else:
-#     print(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
+#inputs = [{'tag': 'marca', 'value': 'pepsi'}, {'tag': 'calibre', 'value': '500 cc pet'}] 
+#inputs = [{'tags': 'codigo', 'values': str(26)}]
+#output_tag = [{'outputs_tags': 'stock'}]
 
 
+def search_P(inputs,output_tag):
+    Busqueda_productos = Products.search_product_info(inputs, Product)
+
+    if Busqueda_productos:
+        if len(Busqueda_productos) > 1:
+            PP= []
+            #print(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}":')
+            product_info = Products.get_product_output(Busqueda_productos)
+            for info in product_info:
+                PP.append(f"- Codigo: {info['codigo']}, Marca: {info['marca']}, Calibre: {info['calibre']}, Stock: {info['stock']}")
+            return(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}": \n {PP}')    
+        else:
+            product_info = Products.get_product_output(Busqueda_productos)
+            #print(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
+            return(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
+    else:
+        #print(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
+        return(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
+
+
+#print(f"PRUEBA: {search_P(inputs,output_tag)}\n")
