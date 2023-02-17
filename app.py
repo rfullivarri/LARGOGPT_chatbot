@@ -22,10 +22,11 @@ def search_form():
 def search():
     # Get the search query from the URL query string
     query = request.args.get('query')
+    print('query:', query)
 
-    search_term_vector = get_embedding(query, engine="text-embedding-ada-002")
+    search_term_vector = get_embedding(str(query), engine="text-embedding-ada-002")
 
-    df = pd.read_csv('CMQ_prompts_embeddings.csv')
+    df = pd.read_csv(r'/Users/ramirofernandezdeullivarri/Documents/CMQ_prompts_embeddings2.csv', delimiter=',',encoding='utf-8')
     df['embedding_prompts'] = df['embedding_prompts'].apply(eval).apply(np.array)
     df["similarities"] = df['embedding_prompts'].apply(lambda x: cosine_similarity(x, search_term_vector))
     sorted_by_similarity = df.sort_values("similarities", ascending=False).head(1)
@@ -33,7 +34,7 @@ def search():
     
     results =[{'outputs_tags': sorted_by_similarity['outputs_tags'].values.tolist(),
                  'tags':sorted_by_similarity['tags'].values.tolist(),
-                 'values':sorted_by_similarity[''].values.tolist()}]
+                 'values':sorted_by_similarity['values'].values.tolist()}]
     if 'values2' in sorted_by_similarity:
       results.append({'tags2': sorted_by_similarity['tags2'].values.tolist(),
                       'values2': sorted_by_similarity['values2'].values.tolist()})
