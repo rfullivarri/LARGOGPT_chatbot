@@ -1,9 +1,8 @@
 import sys
 print(sys.version)
-import app
-import random
 import pandas as pd
 import numpy as np
+
 
 df= pd.read_excel(r"/Users/ramirofernandezdeullivarri/Documents/GitHub/LARGOGPT_chatbot/Maestro de producto.xlsx",sheet_name="BD")
 #df= df.head(20)
@@ -20,17 +19,30 @@ class Producto:
             Product.append(a)
         return Product
     
+
     def search_product_info(self, inputs, Product):
         matching_products = []
         for product in Product:
-            for input_ in inputs:
-                if input_['tag'] not in product.attributes:
+            for i in range(len(inputs[1]['tag'])):
+                if inputs[1]['tag'][i] not in product.attributes:
                     break
-                elif input_['value'] != product.attributes[input_['tag']]:
+                elif inputs[1]['value'][i] != product.attributes[inputs[1]['tag'][i]]:
                     break
             else:
                 matching_products.append(product)
         return matching_products
+
+    # def search_product_info(self, inputs, Product):
+    #     matching_products = []
+    #     for product in Product:
+    #         for input_ in inputs:
+    #             if input_['tag'] not in product.attributes:
+    #                 break
+    #             elif input_['value'] != product.attributes[input_['tag']]:
+    #                 break
+    #         else:
+    #             matching_products.append(product)
+    #     return matching_products
 
     def get_product_output(self, matching_products):
            product_info = []
@@ -184,35 +196,61 @@ product_list = Products.Products_DB()
 
 
 
+#inputs=({'outputs_tags': 'stock'}, {'tag': ['marca', 'calibre'], 'value': ['budweiser', '410']}) 
+# inputs= results
+# output_tag= inputs[0]['outputs_tags']
+# print(inputs)
 
 
+
+
+# tag1= inputs[1]['tag'][0]
+# value1= inputs[1]['value'][0]
+# tag2= inputs[1]['tag'][1]
+# value2= inputs[1]['value'][1]
+# 
+# print(tag1,value1,"\n")
+# print(tag2,value2,"\n")
+# print(output_tag,"\n")
+# for input in inputs:
+#     print(input,"\n")
+#     for i in input:
+#         print(i, "\n")
 
 
 
 #BUSCADOR A PARTI DE: promptsncompletatios INPUTS/OUTPUTS
 #inputs = [{'tag': 'marca', 'value': 'pepsi'}, {'tag': 'calibre', 'value': '500 cc pet'}] 
-#inputs = [{'tags': 'codigo', 'values': str(26)}]
+#inputs = [{'tag': 'codigo', 'value': str(26)}]
 #output_tag = [{'outputs_tags': 'stock'}]
 
 
-def search_P(inputs,output_tag):
-    Busqueda_productos = Products.search_product_info(inputs, Product)
+def search_P(inputs):
+    try:
+        #tag1= inputs[1]['tag'][0]
+        value1= inputs[1]['value'][0]
+        #tag2= inputs[1]['tag'][1]
+        value2= inputs[1]['value'][1]
+        output_tag= inputs[0]['outputs_tags']
 
-    if Busqueda_productos:
-        if len(Busqueda_productos) > 1:
-            PP= []
-            #print(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}":')
-            product_info = Products.get_product_output(Busqueda_productos)
-            for info in product_info:
-                PP.append(f"- Codigo: {info['codigo']}, Marca: {info['marca']}, Calibre: {info['calibre']}, Stock: {info['stock']}")
-            return(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}": \n {PP}')    
+        Busqueda_productos = Products.search_product_info(inputs, Product)
+
+        if Busqueda_productos:
+            if len(Busqueda_productos) > 1:
+                PP= []
+                #print(f'Se encontraron los siguientes productos de {inputs[0]["tag"]} "{inputs[0]["value"]}":')
+                product_info = Products.get_product_output(Busqueda_productos)
+                for info in product_info:
+                    PP.append(f"- Codigo: {info['codigo']}, Marca: {info['marca']}, Calibre: {info['calibre']}, Stock: {info['stock']}")
+                return(f'Se encontraron los siguientes productos de {value1} {value2}: \n {PP}')    
+            else:
+                product_info = Products.get_product_output(Busqueda_productos)
+                #print(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
+                return(f"{output_tag} del producto de {value1} {value2} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
         else:
-            product_info = Products.get_product_output(Busqueda_productos)
-            #print(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
-            return(f"{output_tag} del producto de {inputs[0]['tag']} {inputs[0]['value']} es:\n - Codigo: {product_info[0]['codigo']}, Marca: {product_info[0]['marca']}, Calibre: {product_info[0]['calibre']}, Stock: {product_info[0]['stock']}")
-    else:
-        #print(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
-        return(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
+            #print(f'No se encontraron productos de {inputs[0]["tag"]} "{inputs[0]["value"]}"')
+            return(f'No se encontraron productos de {value1} "{value2}"')
+    except:
+        pass
 
-
-#print(f"PRUEBA: {search_P(inputs,output_tag)}\n")
+# #print(f"PRUEBA: {search_P(inputs,output_tag)}\n")

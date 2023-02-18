@@ -4,7 +4,7 @@ from openai.embeddings_utils import get_embedding, cosine_similarity
 import pandas as pd
 import numpy as np
 import config
-import class_n_search
+from class_n_search import search_P
 
 app = Flask(__name__)
 
@@ -43,9 +43,10 @@ def search():
                   'value':[sorted_by_similarity['values'].values.tolist(), sorted_by_similarity['values2'].values.tolist()]
                    })
     
+    final_result = search_P(results)
 
     # Render the search results template, passing in the search query and results
-    return render_template('search_results.html', query=query, results=results)
+    return render_template('search_results.html', query=query, results=final_result)
 
 
 if __name__ == '__main__':
