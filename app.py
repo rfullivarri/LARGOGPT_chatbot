@@ -34,14 +34,14 @@ def search():
 
     
     if sorted_by_similarity['values2'].isnull().any():
-      results = ({'outputs_tags': sorted_by_similarity['outputs_tags'].values.tolist()},
-                     {'tag':sorted_by_similarity['tags'].values.tolist(),
-                     'value':sorted_by_similarity['values'].values.tolist()})
+        results = ({'outputs_tags': sorted_by_similarity['outputs_tags'].values[0]},
+                       {'tag':sorted_by_similarity['tags'].values[0],
+                       'value':sorted_by_similarity['values'].values[0]})
     else:
-      results = ({'outputs_tags': sorted_by_similarity['outputs_tags'].values.tolist()},
-                 {'tag':[sorted_by_similarity['tags'].values.tolist(), sorted_by_similarity['tags2'].values.tolist()],
-                  'value':[sorted_by_similarity['values'].values.tolist(), sorted_by_similarity['values2'].values.tolist()]
-                   })
+        results = ({'outputs_tags': sorted_by_similarity['outputs_tags'].values[0]},
+                   {'tag':[sorted_by_similarity['tags'].values[0], sorted_by_similarity['tags2'].values[0]],
+                    'value':[sorted_by_similarity['values'].values[0], sorted_by_similarity['values2'].values[0]]
+                     })
     
     final_result = search_P(results)
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
   <head>
     <title>Search Results</title>
@@ -22,6 +22,60 @@
     {% else %}
       <p>No results found.</p>
     {% endif %}
+    </div>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search Results</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+      /* Agregamos estilos para el spinner */
+      .spinner {
+        margin: 50px auto;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 5px solid #ccc;
+        border-top-color: #999;
+        animation: spin 1s infinite linear;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script>
+      // Agregamos un evento "submit" al formulario para mostrar el spinner
+      document.querySelector('form').addEventListener('submit', function() {
+        document.querySelector('.spinner').style.display = 'block';
+      });
+      
+      // Ocultamos el spinner cuando se recibe la respuesta del servidor
+      window.addEventListener('load', function() {
+        document.querySelector('.spinner').style.display = 'none';
+      });
+    </script>
+  </head>
+  <body>
+    <img id="logo" src="/static/images/logo.png" alt="A description of the image">
+
+    <form action="/search" method="GET">
+      <input type="text" id="query" name="query" value="{{ query }}">
+      <input type="submit" value="search">
+    </form> 
+    
+    <div id="results">
+      {% if results %}
+        <h1>Search Results</h1>
+        <ul>
+          <li>"{{ results }}"</li>
+        </ul>
+      {% else %}
+        <div class="spinner" style="display:none;"></div> <!-- Agregamos un estilo "display:none" para ocultar el spinner inicialmente -->
+        <p>No results found.</p>
+      {% endif %}
     </div>
   </body>
 </html>
